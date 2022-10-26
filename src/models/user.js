@@ -4,6 +4,10 @@ module.exports = class User extends Sequelize.Model {
   static init(sequelize) {
     return super.init(
       {
+        name: {
+          type: Sequelize.STRING(30),
+          allowNull: false,
+        },
         email: {
           type: Sequelize.STRING(255),
           allowNull: false,
@@ -11,13 +15,18 @@ module.exports = class User extends Sequelize.Model {
         },
         password: {
           type: Sequelize.STRING(20),
-          allowNull: false,
+          allowNull: true,
         },
         phone: {
           type: Sequelize.STRING(30),
+          allowNull: true,
         },
         age: {
           type: Sequelize.SMALLINT.UNSIGNED,
+          allowNull: true,
+        },
+        kakao_id: {
+          type: Sequelize.STRING(255),
           allowNull: true,
         },
       },
@@ -41,6 +50,11 @@ module.exports = class User extends Sequelize.Model {
 
     db.User.belongsTo(db.Gender, {
       foreignKey: "gender_id",
+      targetKey: "id",
+    });
+
+    db.User.belongsTo(db.PlatformType, {
+      foreignKey: "platform_type_id",
       targetKey: "id",
     });
 
