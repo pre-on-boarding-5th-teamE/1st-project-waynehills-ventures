@@ -5,9 +5,9 @@ module.exports = class UserAccess extends Sequelize.Model {
     return super.init(
       {
         last_time: {
-          type: Sequelize.TIME,
+          type: "TIMESTAMP",
+          defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
           allowNull: false,
-          defaultValue: Sequelize.NOW,
         },
       },
       {

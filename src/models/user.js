@@ -29,10 +29,22 @@ module.exports = class User extends Sequelize.Model {
           type: Sequelize.STRING(255),
           allowNull: true,
         },
+        created_at: {
+          type: "TIMESTAMP",
+          defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
+          allowNull: false,
+        },
+        updated_at: {
+          type: "TIMESTAMP",
+          defaultValue: sequelize.literal(
+            "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+          ),
+          allowNull: false,
+        },
       },
       {
         sequelize,
-        timestamps: true,
+        timestamps: false,
         underscored: true,
         modelName: "User",
         tableName: "user",
