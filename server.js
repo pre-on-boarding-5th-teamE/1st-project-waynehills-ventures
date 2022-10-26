@@ -7,7 +7,7 @@ const startServer = async () => {
   const app = createApp();
   const PORT = process.env.PORT;
   await sequelize
-    .sync({ force: false })
+    .sync({ force: false, alter: true })
     .then(() => {
       console.log("연결 성공!");
     })
