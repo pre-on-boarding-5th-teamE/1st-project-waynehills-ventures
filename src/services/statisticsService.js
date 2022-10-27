@@ -9,10 +9,9 @@ const getGenderStatistics = async () => {
   const womenUserCount = await User.count({
     where: { gender_id: 2 },
   });
-  const menPercent = Number(((menUserCount / totalUserCount) * 100).toFixed(2));
-  const womenPercent = Number(
-    ((womenUserCount / totalUserCount) * 100).toFixed(2)
-  );
+  const menPercent = ((menUserCount / totalUserCount) * 100).toFixed(2);
+  const womenPercent = ((womenUserCount / totalUserCount) * 100).toFixed(2);
+
   const genderStatistics = {};
   genderStatistics["totalUserCount"] = totalUserCount;
   genderStatistics["menUserCount"] = menUserCount;
@@ -66,24 +65,28 @@ const getAgeStatistics = async () => {
       },
     },
   });
-  const underTeensPercent = Number(
-    ((underTeensUserCount / totalUserCount) * 100).toFixed(2)
+  const underTeensPercent = (
+    (underTeensUserCount / totalUserCount) *
+    100
+  ).toFixed(2);
+
+  const twentiesPercent = ((twentiesUserCount / totalUserCount) * 100).toFixed(
+    2
   );
-  const twentiesPercent = Number(
-    ((twentiesUserCount / totalUserCount) * 100).toFixed(2)
+
+  const thirtiesPercent = ((thirtiesUserCount / totalUserCount) * 100).toFixed(
+    2
   );
-  const thirtiesPercent = Number(
-    ((thirtiesUserCount / totalUserCount) * 100).toFixed(2)
-  );
-  const fortiesPercent = Number(
-    ((fortiesUserCount / totalUserCount) * 100).toFixed(2)
-  );
-  const fiftyPercent = Number(
-    ((fiftyUserCount / totalUserCount) * 100).toFixed(2)
-  );
-  const overSixtiesPercent = Number(
-    ((overSixtiesUserCount / totalUserCount) * 100).toFixed(2)
-  );
+
+  const fortiesPercent = ((fortiesUserCount / totalUserCount) * 100).toFixed(2);
+
+  const fiftyPercent = ((fiftyUserCount / totalUserCount) * 100).toFixed(2);
+
+  const overSixtiesPercent = (
+    (overSixtiesUserCount / totalUserCount) *
+    100
+  ).toFixed(2);
+
   const ageStatistics = {};
   ageStatistics["totalUserCount"] = totalUserCount;
   ageStatistics["underTeensUserCount"] = underTeensUserCount;
@@ -101,7 +104,25 @@ const getAgeStatistics = async () => {
   return ageStatistics;
 };
 
-const getTimeStatistics = async () => {};
+const getTimeStatistics = async () => {
+  const totalAccessUserCount = await UserAccess.count({});
+  const today = new Date().getTime();
+  const lastTimeList = await UserAccess.findAll({
+    attributes: ["last_time"],
+    raw: true,
+  });
+  let sumDay = 0;
+  lastTimeList.forEach((element) => {
+    sumDay += Math.ceil(
+      (today - element.last_time.getTime()) / (1000 * 60 * 60 * 24)
+    );
+  });
+  const avgLastAccessDay = (sumDay / lastTimeList.length).toFixed(2);
+  const timeStatistics = {};
+  timeStatistics["totalAccessUserCount"] = totalAccessUserCount;
+  timeStatistics["avgLastAccessDay"] = avgLastAccessDay;
+  return timeStatistics;
+};
 
 module.exports = {
   getGenderStatistics,
