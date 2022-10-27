@@ -5,6 +5,8 @@ const errorHandler = require("../middlewares/errorHandler");
 
 router.post("/", errorHandler(boardController.writing));
 
+router.get("/page/:pageNum", errorHandler(boardController.list));
+
 module.exports = {
   router,
 };
