@@ -32,7 +32,31 @@ const signIn = errorHandler(async (req, res) => {
   res.status(200).json({ accessToken });
 });
 
+const signInByKakao = errorHandler(async (req, res) => {
+  const { code } = req.query;
+
+  if (!code) {
+    throw new error("KEY_ERROR", 400);
+  }
+
+  const accessToken = await userService.signInByKakao(code);
+  res.status(200).json({ accessToken });
+});
+
+const deleteUser = errorHandler(async (req, res) => {
+  const { id } = req.query;
+
+  if (!id) {
+    throw new error("KEY_ERROR", 400);
+  }
+
+  await userService.deleteUser(id);
+  res.status(204).send();
+});
+
 module.exports = {
   signUp,
   signIn,
+  signInByKakao,
+  deleteUser,
 };

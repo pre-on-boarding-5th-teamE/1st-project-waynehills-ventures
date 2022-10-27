@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.post("/signup", userController.signUp);
 router.post("/signin", userController.signIn);
-// userRouter.post('/signin/kakao', userController.signInByKakao);
+router.get("/signin/kakao", userController.signInByKakao);
+router.delete("", userController.deleteUser);
 
 module.exports = {
   router,
