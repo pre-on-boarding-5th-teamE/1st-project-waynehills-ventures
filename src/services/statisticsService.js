@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, UserAccess } = require("../models");
 const { Op } = require("sequelize");
 
 const getGenderStatistics = async () => {
@@ -101,7 +101,10 @@ const getAgeStatistics = async () => {
   return ageStatistics;
 };
 
+const getTimeStatistics = async () => {};
+
 module.exports = {
   getGenderStatistics,
   getAgeStatistics,
+  getTimeStatistics,
 };

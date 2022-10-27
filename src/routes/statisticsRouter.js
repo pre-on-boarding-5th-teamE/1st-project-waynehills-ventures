@@ -8,6 +8,8 @@ router.get("/gender", errorHandler(statisticsController.getGenderStatistics));
 
 router.get("/age", errorHandler(statisticsController.getAgeStatistics));
 
+router.get("/time", errorHandler(statisticsController.getTimeStatistics));
+
 module.exports = {
   router,
 };

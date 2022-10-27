@@ -10,7 +10,13 @@ const getAgeStatistics = async (req, res) => {
   res.status(200).json({ ageStatistics });
 };
 
+const getTimeStatistics = async (req, res) => {
+  const timeStatistics = await statisticsService.getTimeStatistics();
+  res.status(200).json({ timeStatistics });
+};
+
 module.exports = {
   getGenderStatistics,
   getAgeStatistics,
+  getTimeStatistics,
 };
