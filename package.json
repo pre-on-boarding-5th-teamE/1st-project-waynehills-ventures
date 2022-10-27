@@ -4,7 +4,7 @@
   "description": "preonboarding",
   "main": "app.js",
   "scripts": {
-    "test": "NODE_ENV=test jest --runInBand",
+    "test": "MODE_ENV=test jest --runInBand",
     "start": "nodemon server.js"
   },
   "repository": {
