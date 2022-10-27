@@ -1,6 +1,6 @@
 const error = require('../middlewares/errorConstructor');
 const errorHandler = require('../middlewares/errorHandler');
-const {userService} = require('../services');
+const userService = require('../services/userService');
 
 const signUp = errorHandler(async(req, res) => {
     const {name, email, password, phone, age, gradeId, genderId} = req.body;

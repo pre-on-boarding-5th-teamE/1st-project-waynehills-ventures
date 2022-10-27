@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const error = require('../middlewares/errorConstructor');
-const {User, sequelize, UserAccess} = require('../models');
+const {User, UserAccess} = require('../models');
 
 const hashPassword = async(password) => {
     const saltRound = 10;
