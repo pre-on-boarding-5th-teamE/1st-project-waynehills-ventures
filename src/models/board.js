@@ -12,10 +12,22 @@ module.exports = class Board extends Sequelize.Model {
           type: Sequelize.TEXT,
           allowNull: false,
         },
+        created_at: {
+          type: "TIMESTAMP",
+          defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
+          allowNull: false,
+        },
+        updated_at: {
+          type: "TIMESTAMP",
+          defaultValue: sequelize.literal(
+            "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+          ),
+          allowNull: false,
+        },
       },
       {
         sequelize,
-        timestamps: true,
+        timestamps: false,
         underscored: true,
         modelName: "Board",
         tableName: "board",
