@@ -79,7 +79,6 @@ const signIn = async(email, password) => {
     
     const accessTime = await getNow();
     const check = await getUserAccess(user.id)
-    console.log(check)
 
     if (!check) {
         await UserAccess.create({
