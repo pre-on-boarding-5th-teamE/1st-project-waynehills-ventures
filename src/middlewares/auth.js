@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
-const {asyncWrap} = require('./error');
+const errorHandler = require('../middlewares/errorHandler');
 const { userService } = require('../services');
 
-const loginRequired = asyncWrap(async (req, res, next) => {
+const loginRequired = errorHandler(async (req, res, next) => {
     let accessToken = req.headers.authorization;
 
     if (!accessToken) {
