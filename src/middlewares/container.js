@@ -9,9 +9,18 @@ class Request {
     return result;
   };
 
-  getPageNum = () => {
-    const { pageNum } = this.data.params;
-    return pageNum;
+  getPageNumAndType = () => {
+    const { pageNum, typeId } = this.data.params;
+    const result = {
+      pageNum,
+      typeId,
+    };
+    return result;
+  };
+
+  getKeyWord = () => {
+    const { keyWord } = this.data.params;
+    return keyWord;
   };
 
   //로그인 과정에서 사용자의 정보가 토큰에 저장 =>
@@ -20,6 +29,16 @@ class Request {
   getUserInfo = () => {
     const { userInfo } = this.data.body;
     return userInfo;
+  };
+
+  getBoardId = () => {
+    const { boardId } = this.data.params;
+    return boardId;
+  };
+
+  getUpdateContent = () => {
+    const { content } = this.data.body;
+    return content;
   };
 }
 module.exports = Request;
