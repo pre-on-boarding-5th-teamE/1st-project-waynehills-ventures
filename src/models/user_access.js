@@ -6,8 +6,8 @@ module.exports = class UserAccess extends Sequelize.Model {
       {
         last_time: {
           type: "TIMESTAMP",
-          defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
           allowNull: false,
+          defaultValue: sequelize.literal("CURRENT_TIMESTAMP"),
         },
       },
       {
