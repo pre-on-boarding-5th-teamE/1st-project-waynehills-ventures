@@ -31,7 +31,7 @@ describe("board service test: ", () => {
   describe("boardWriting test: ", () => {
     test("success:", async () => {
       await request(app)
-        .post("/board")
+        .post("/board/3")
         .send({
           writer_id: "1",
           writed_id: "1",
