@@ -4,6 +4,7 @@ const {
   getSearch,
   getDetailPage,
   updateBoard,
+  deleteBoard,
 } = require("../services/boardService");
 const Request = require("../middlewares/container");
 
@@ -20,6 +21,7 @@ const list = async (req, res) => {
 
 const search = async (req, res) => {
   const result = await getSearch(new Request(req));
+  console.log(result);
   res.status(200).json(result);
 };
 
@@ -30,7 +32,16 @@ const detail = async (req, res) => {
 
 const rewrite = async (req, res) => {
   const result = await updateBoard(new Request(req));
-  res.status(201).json(result);
+  if (result[0]) {
+    res.status(201).json({ message: "success" });
+  } else {
+    res.status(400).json({ message: "failed" });
+  }
+};
+
+const erase = async (req, res) => {
+  const result = await deleteBoard(new Request(req));
+  res.status(204).json(result);
 };
 
 module.exports = {
@@ -39,4 +50,5 @@ module.exports = {
   search,
   detail,
   rewrite,
+  erase,
 };

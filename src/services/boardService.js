@@ -50,26 +50,63 @@ const getList = async (Data) => {
 };
 
 const getSearch = async (Data) => {
+  const value = await Data.getPageNumAndType();
   const keyWord = await Data.getKeyWord();
   const userInfo = await Data.getUserInfo();
+
   extendError.findKeyError(keyWord);
   extendError.findKeyError(userInfo.grade);
-  return await Board.findAll({
+  extendError.findKeyError(value.pageNum);
+
+  const config = {
     include: {
       model: Type,
       required: true,
       attributes: ["name"],
     },
     attributes: ["name", "id"],
+    offset: 4 * (value.pageNum - 1),
+    limit: 4,
     where: {
-      name: {
-        [Op.substring]: keyWord,
-      },
-      text: {
-        [Op.substring]: keyWord,
-      },
+      [Op.or]: [
+        {
+          name: {
+            [Op.substring]: keyWord,
+          },
+        },
+        {
+          text: {
+            [Op.substring]: keyWord,
+          },
+        },
+      ],
     },
-  });
+  };
+  if (userInfo.grade !== 3) {
+    return await Board.findAll({
+      ...config,
+    });
+  } else {
+    config.where = {
+      [Op.or]: [
+        {
+          name: {
+            [Op.substring]: keyWord,
+          },
+        },
+        {
+          text: {
+            [Op.substring]: keyWord,
+          },
+        },
+      ],
+      board_type_id: 1,
+      board_type_id: 3,
+    };
+    return await Board.findAll({
+      ...config,
+    });
+  }
 };
 
 const getDetailPage = async (Data) => {
@@ -99,22 +136,49 @@ const updateBoard = async (Data) => {
   const boardId = await Data.getBoardId();
   const userInfo = await Data.getUserInfo();
   const content = await Data.getUpdateContent();
-  console.log(boardId, userInfo, content);
+
   extendError.findKeyError(boardId);
   extendError.findKeyError(userInfo.userId);
-  if (userInfo.userGrade !== 3) {
-    return await Board.update(content, {
+
+  return await Board.update(content, {
+    where: {
+      id: boardId,
+      writer_id: userInfo.userId,
+    },
+  });
+};
+
+//delete 는 예외 처리를 어떻게 해야 할까? return 값이 없어서 곤란.
+const deleteBoard = async (Data) => {
+  const boardId = await Data.getBoardId();
+  const userInfo = await Data.getUserInfo();
+
+  if (userInfo.grade === 1) {
+    return await Board.destroy({
       where: {
         id: boardId,
+      },
+    });
+  } else if (userInfo.grade === 2) {
+    return await Board.destroy({
+      where: {
+        id: boardId,
+        [Op.or]: [
+          { board_type_id: 2, writer_id: userInfo.id },
+          { board_type_id: 3 },
+        ],
+      },
+    });
+  } else if (userInfo.grade === 3) {
+    return await Board.destroy({
+      where: {
+        id: boardId,
+        writer_id: userInfo.id,
+        board_type_id: 3,
       },
     });
   } else {
-    return await Board.update(content, {
-      where: {
-        id: boardId,
-        writer_id: userInfo.userId,
-      },
-    });
+    throw new error("invalid_grade", 400);
   }
 };
 
@@ -124,4 +188,5 @@ module.exports = {
   getSearch,
   getDetailPage,
   updateBoard,
+  deleteBoard,
 };
