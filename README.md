@@ -24,7 +24,10 @@
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-   
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#installation">Installation</a></li>
+      </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
@@ -38,7 +41,7 @@
 
 - ERD
 
-- 프로젝트 개요(각자 맡은 책임, 과제 분석, 기능 구현 상세)
+- 프로젝트 개요(각자 맡은 책임, 과제 분석, 기능 구현 상세, )
 
 
 ### Built With
