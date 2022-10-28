@@ -48,6 +48,18 @@ describe("board service test: ", () => {
   });
 
   describe("boardWriting test: ", () => {
+    test("success", async () => {
+      await request(app)
+        .post("/board/1")
+        .set({ Authorization: auth })
+        .send({
+          name: "유우머1",
+          board_type_id: 3,
+          text: "유머 시리즈1",
+        })
+        .expect(201);
+    });
+
     test.only("success:", async () => {
       await request(app)
         .post("/board/3")
@@ -58,13 +70,8 @@ describe("board service test: ", () => {
           text: "유머 시리즈1",
         })
         .expect(201)
-        .expect({ message: "success" })
-        .end((err, res) => {
-          if (err) return done(err);
-          return done();
-        });
+        .expect({ message: "success" });
     });
-
     test("success:", async () => {
       await request(app)
         .post("/board/1")
@@ -77,7 +84,6 @@ describe("board service test: ", () => {
         .expect(201)
         .expect({ message: "success" });
     });
-
     test("success:", async () => {
       await request(app)
         .post("/board/2")
@@ -90,7 +96,6 @@ describe("board service test: ", () => {
         .expect(201)
         .expect({ message: "success" });
     });
-
     test("falied:", async () => {
       await request(app)
         .post("/board/3")
@@ -105,7 +110,6 @@ describe("board service test: ", () => {
         .expect(400)
         .expect({ message: "key_error" });
     });
-
     test("falied:", async () => {
       await request(app)
         .post("/board/3")
@@ -119,7 +123,6 @@ describe("board service test: ", () => {
         .expect({ message: "key_error" });
     });
   });
-
   describe("getList test: ", () => {
     test("success: ", async () => {
       const response = await request(app)
@@ -133,7 +136,6 @@ describe("board service test: ", () => {
       expect(response.status).toEqual(200);
       expect(response.body.length).toBe(4);
     });
-
     //선행 테스트인 boardWriting 에 의존하고 있다. POST 테스트 결과
     //board 테이블에 글이 생성되는데, 이 값에 따라 본 테스트의 결과값이 달라질 수 있다.
     test("success", async () => {
@@ -143,7 +145,6 @@ describe("board service test: ", () => {
         .send({ user: { grade_id: 3 } });
       expect(response.body.length).toBe(2);
     });
-
     test("failed, 잘못된 url", async () => {
       await request(app)
         .get("/board/page/")
@@ -151,7 +152,6 @@ describe("board service test: ", () => {
         .send({ user: { grade_id: 3 } })
         .expect(404);
     });
-
     test("failed, pageNum 잘못된 값", async () => {
       await request(app)
         .get("/board/page/1/lll")
@@ -161,7 +161,6 @@ describe("board service test: ", () => {
         .expect({ message: "invalid_key" });
     });
   });
-
   describe("getSearch test: ", () => {
     test("success", async () => {
       const response = await request(app)
@@ -171,7 +170,6 @@ describe("board service test: ", () => {
       expect(response.status).toEqual(200);
       expect(response.body.length).toBe(1);
     });
-
     test("success: 일반회원은 운영게시글을 조회 못함", async () => {
       const response = await request(app)
         .get("/board/search/1/second/1")
@@ -180,7 +178,6 @@ describe("board service test: ", () => {
       expect(response.status).toEqual(200);
       expect(response.body.length).toBe(0);
     });
-
     test("success: 찾은 게시글이 작성된 게시글과 일치하는지 테스트", async () => {
       const response = await request(app)
         .get("/board/search/1/third/1")
@@ -191,7 +188,6 @@ describe("board service test: ", () => {
         { name: "third", id: 3, Type: { name: "자유게시판" } },
       ]);
     });
-
     test("failed: 잘못된 url", async () => {
       await request(app)
         .get("/board/search/1/t")
@@ -199,7 +195,6 @@ describe("board service test: ", () => {
         .send({ user: { grade_id: 1 } })
         .expect(404);
     });
-
     test("failed: pageNum 가 숫자 아님", async () => {
       await request(app)
         .get("/board/search/1/third/what?")
@@ -208,7 +203,6 @@ describe("board service test: ", () => {
         .expect(400)
         .expect({ message: "invalid_key" });
     });
-
     test("failed: typeId 가 숫자 아님", async () => {
       await request(app)
         .get("/board/search/wh/third/1")
@@ -218,7 +212,6 @@ describe("board service test: ", () => {
         .expect({ message: "invalid_key" });
     });
   });
-
   describe("getDetailPage test:", () => {
     //boardService: getDetailPage 에서 findAll 에 paranoid:false 를 추가해줘야 오류가 나지 않는다.
     //오류가 나는 원인은 join 시 칼럼 deleted_at 을 불러올 수 없어서 그런듯 하다.
@@ -242,7 +235,6 @@ describe("board service test: ", () => {
         },
       ]);
     });
-
     test("failed: url 이 틀렸을때", async () => {
       const response = await request(app)
         .get("/board/detai")
@@ -250,7 +242,6 @@ describe("board service test: ", () => {
         .send({ user: { grade_id: 1 } });
       expect(response.status).toEqual(404);
     });
-
     test("failed: pageNum 숫자가 아닐때", async () => {
       await request(app)
         .get("/board/detail/1/hhh")
@@ -259,7 +250,6 @@ describe("board service test: ", () => {
         .expect(400)
         .expect({ message: "invalid_key" });
     });
-
     test("failed: 없는 게시물", async () => {
       await request(app)
         .get("/board/detail/1/1000")
@@ -269,8 +259,7 @@ describe("board service test: ", () => {
         .expect({ message: "key_error" });
     });
   });
-
-  //   describe("updateBoard test: ", () => {
-  //     test("success: 업데이트 성공", () => {});
-  //   });
+  describe("updateBoard test: ", () => {
+    test("success: 업데이트 성공", () => {});
+  });
 });
