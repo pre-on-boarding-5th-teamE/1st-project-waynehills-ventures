@@ -36,19 +36,13 @@
 
 
 <!-- ABOUT THE PROJECT -->
+# [프리온보딩] 웨인힐스벤처스 게시판 서버 개발 프로젝트
+
 ## About The Project
 
-### ERD
-<img width="880" alt="스크린샷 2022-10-19 오후 7 14 59" src="https://user-images.githubusercontent.com/88824305/198552155-0b658e53-5dc6-4568-9c9c-a07247bce9f0.png">
-</br>
+### 프로젝트 개요
 
-- grade table: 사용자의 등급을 정해서 게시판 기능 이용에 차등을 주도록 설계했음
-- board table: 기능 이용 등급 차등화를 위해서 게시판에도 등급을 부여했음(type table)
-- user table: soft delete 와 hard delete 를 구분했음. deleted_at 칼럼을 작성함.
-- user table: 소셜 로그인과 로컬 로그인 가능. name 이 겹칠 우려가 있어 platform_type table 작성함.
-
-### 프로젝트 개요(각자 맡은 책임, 과제 분석, 기능 구현 상세, )
-- 서비스 개요
+#### 서비스 개요
     - 우리는 다양한 사용자가 자유롭게 게시글을 쓰고 공유하는 서비스를 가정하였다.
     - 그렇기에 사용자는 외원가입하고 0000는 000 … 하도록 구현 하였다.
 - 요구사항
@@ -98,6 +92,15 @@
         1. 금요일 이후에 구현 
 - 추가 구현 목표
     - 게시판(우선순위): 좋아요 / 댓글 / 이미지 삽입(AWS S3) / Cache(node-cache 또는 LRU-cache 또는 Redis)
+
+### ERD
+<img width="880" alt="스크린샷 2022-10-19 오후 7 14 59" src="https://user-images.githubusercontent.com/88824305/198552155-0b658e53-5dc6-4568-9c9c-a07247bce9f0.png">
+</br>
+
+- grade table: 사용자의 등급을 정해서 게시판 기능 이용에 차등을 주도록 설계했음
+- board table: 기능 이용 등급 차등화를 위해서 게시판에도 등급을 부여했음(type table)
+- user table: soft delete 와 hard delete 를 구분했음. deleted_at 칼럼을 작성함.
+- user table: 소셜 로그인과 로컬 로그인 가능. name 이 겹칠 우려가 있어 platform_type table 작성함.
 
 ### Built With
 
@@ -181,14 +184,18 @@
 <!-- ROADMAP -->
 ## Roadmap
 
-구현 목표 -> 얼마나 구현햇는지 
+#### 구현 목표 
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
+- [x] 로컬 로그인
+- [x] 소셜 로그인
+- [x] 회원가입 / 회원탈퇴
+- [x] 게시판 기능 접근 제어자
+- [x] 이용자 통계 기능
+- [x] 자유게시판 / 운영게시판 / 공지사항
+    - [ ] 좋아요
+    - [ ] 댓글
+    - [ ] 이미지 (AWS S3)
+    - [ ] User unit test / integration test
+    - [ ] E2E test
 
 
