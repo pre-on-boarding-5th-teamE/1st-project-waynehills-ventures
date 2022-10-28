@@ -178,7 +178,7 @@
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-[api 명세](https://docs.google.com/spreadsheets/d/1ei1Tc8sxuUlmtTEqNQ5c1Vg1pX1fGxCkmewfgoIq6qY/edit#gid=1153640910)
+[API 명세](https://docs.google.com/spreadsheets/d/1ei1Tc8sxuUlmtTEqNQ5c1Vg1pX1fGxCkmewfgoIq6qY/edit#gid=1153640910)
 
 
 <!-- ROADMAP -->
