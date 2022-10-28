@@ -115,16 +115,20 @@ const signUp = async (name, email, password, phone, age, gradeId, genderId) => {
     if (!user.kakao_id) {
       throw new error("USER_OVERLAPED", 400);
     } else {
-      const hashedPassword = await hashPassword(password);
+      if (user.password) {
+        throw new error("USER_OVERLAPED", 400);
+      } else {
+        const hashedPassword = await hashPassword(password);
 
-      await User.update(
-        {
-          password: hashedPassword,
-          phone: phone,
-          age: age,
-        },
-        { where: { email: email } }
-      );
+        await User.update(
+          {
+            password: hashedPassword,
+            phone: phone,
+            age: age,
+          },
+          { where: { email: email } }
+        );
+      }
     }
   } else {
     if (!deletedUser) {
