@@ -93,6 +93,21 @@ const getUserAccess = async (id) => {
   return result;
 };
 
+const getAccessToken = async (id) => {
+  const result = jwt.sign(
+    {
+      id: id,
+    },
+    process.env.JWT_SECRET,
+    {
+      algorithm: process.env.ALGORITHM,
+      expiresIn: process.env.JWT_EXPIRES_IN,
+    }
+  );
+
+  return result;
+};
+
 const signUp = async (name, email, password, phone, age, gradeId, genderId) => {
   const user = await getUserByEmail(email);
   const deletedUser = await getDeletedUser(email);
@@ -101,16 +116,20 @@ const signUp = async (name, email, password, phone, age, gradeId, genderId) => {
     if (!user.kakao_id) {
       throw new error("USER_OVERLAPED", 400);
     } else {
-      const hashedPassword = await hashPassword(password);
+      if (user.password) {
+        throw new error("USER_OVERLAPED", 400);
+      } else {
+        const hashedPassword = await hashPassword(password);
 
-      await User.update(
-        {
-          password: hashedPassword,
-          phone: phone,
-          age: age,
-        },
-        { where: { email: email } }
-      );
+        await User.update(
+          {
+            password: hashedPassword,
+            phone: phone,
+            age: age,
+          },
+          { where: { email: email } }
+        );
+      }
     }
   } else {
     if (!deletedUser) {
@@ -176,16 +195,7 @@ const signIn = async (email, password) => {
     { where: { user_id: user.id } }
   );
 
-  const accessToken = jwt.sign(
-    {
-      id: user.id,
-    },
-    process.env.JWT_SECRET,
-    {
-      algorithm: process.env.ALGORITHM,
-      expiresIn: process.env.JWT_EXPIRES_IN,
-    }
-  );
+  const accessToken = await getAccessToken(user.id);
 
   return accessToken;
 };
@@ -228,16 +238,7 @@ const signInByKakao = async (code) => {
   const accessTime = await getNow();
 
   if (user.id && user.kakao_id) {
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-      },
-      process.env.JWT_SECRET,
-      {
-        algorithm: process.env.ALGORITHM,
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      }
-    );
+    const accessToken = await getAccessToken(user.id);
 
     return accessToken;
   } else if (user.id && !user.kakao_Id) {
@@ -251,16 +252,7 @@ const signInByKakao = async (code) => {
       { where: { user_id: user.id } }
     );
 
-    const accessToken = jwt.sign(
-      {
-        id: user.id,
-      },
-      process.env.JWT_SECRET,
-      {
-        algorithm: process.env.ALGORITHM,
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      }
-    );
+    const accessToken = await getAccessToken(user.id);
 
     return accessToken;
   } else {
@@ -281,23 +273,14 @@ const signInByKakao = async (code) => {
       user_id: newUser.id,
     });
 
-    const accessToken = jwt.sign(
-      {
-        id: newUser.id,
-      },
-      process.env.JWT_SECRET,
-      {
-        algorithm: process.env.ALGORITHM,
-        expiresIn: process.env.JWT_EXPIRES_IN,
-      }
-    );
+    const accessToken = await getAccessToken(newUser.id);
 
     return accessToken;
   }
 };
 
-const deleteUser = async (id) => {
-  return await User.destroy({ where: { id: id } });
+const deleteUser = async (userId) => {
+  return await User.destroy({ where: { id: userId } });
 };
 
 module.exports = {
