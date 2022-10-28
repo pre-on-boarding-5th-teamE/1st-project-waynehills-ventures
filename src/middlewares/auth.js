@@ -1,31 +1,29 @@
-const jwt = require('jsonwebtoken');
-const errorHandler = require('../middlewares/errorHandler');
-const { userService } = require('../services');
+const jwt = require("jsonwebtoken");
+const error = require("../middlewares/errorConstructor");
+const userService = require("../services/userService");
 
-const loginRequired = errorHandler(async (req, res, next) => {
+const loginRequired = async (req, res, next) => {
+  try {
     let accessToken = req.headers.authorization;
 
     if (!accessToken) {
-        const error = new Error('NEED_ACCESSTOKEN');
-        error.statusCode = 401;
-
-        throw error;
+      throw new error("NEED_ACCESS_TOKEN", 400);
     }
 
-    const veryfiedToken = jwt.verify(accessToken, process.env.JWT_SECRET);
+    const veryfiedToken = await jwt.verify(accessToken, process.env.JWT_SECRET);
     const user = await userService.getUserById(veryfiedToken.id);
 
     if (!user) {
-        const error = new Error('INVALID_USER');
-        error.statusCode = 400;
-
-        throw error;
+      throw new error("INVALID_USER", 400);
     }
 
     req.user = user;
     next();
-});
+  } catch (err) {
+    throw new error(err.message, err.statusCode);
+  }
+};
 
 module.exports = {
-    loginRequired,
+  loginRequired,
 };
