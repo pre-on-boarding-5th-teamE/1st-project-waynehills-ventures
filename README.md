@@ -25,8 +25,7 @@
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
+        <li><a href="#환경셋팅">환경셋팅</a></li>
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
@@ -62,7 +61,7 @@
 
 
 
-### 환경 셋팅
+### 환경셋팅
 
 npm 관련 셋팅 어떻게 구동 시킬지 
 
