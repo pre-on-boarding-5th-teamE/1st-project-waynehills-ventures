@@ -3,7 +3,6 @@ function errorHandler(asyncController) {
     try {
       await asyncController(req, res);
     } catch (err) {
-      console.log(err);
       res.status(err.status ? err.status : 500).json({ message: err.message });
     }
   };

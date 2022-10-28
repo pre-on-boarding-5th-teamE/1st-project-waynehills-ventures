@@ -112,8 +112,8 @@ const getSearch = async (Data) => {
 const getDetailPage = async (Data) => {
   const boardId = await Data.getBoardId();
   extendError.findKeyError(boardId);
-  return await Board.findAll({
-    attributes: ["id", "name", "text", "created_at", "updated_at"],
+  const result = await Board.findAll({
+    attributes: ["id", "name", "text"],
     include: [
       {
         model: Type,
@@ -124,12 +124,15 @@ const getDetailPage = async (Data) => {
         model: User,
         required: true,
         attributes: ["email"],
+        paranoid: false,
       },
     ],
     where: {
       id: boardId,
     },
   });
+  extendError.findKeyError(result);
+  return result;
 };
 
 const updateBoard = async (Data) => {
@@ -148,7 +151,6 @@ const updateBoard = async (Data) => {
   });
 };
 
-//delete 는 예외 처리를 어떻게 해야 할까? return 값이 없어서 곤란.
 const deleteBoard = async (Data) => {
   const boardId = await Data.getBoardId();
   const userInfo = await Data.getUserInfo();
@@ -178,7 +180,7 @@ const deleteBoard = async (Data) => {
       },
     });
   } else {
-    throw new error("invalid_grade", 400);
+    throw new error("invalid", 400);
   }
 };
 
