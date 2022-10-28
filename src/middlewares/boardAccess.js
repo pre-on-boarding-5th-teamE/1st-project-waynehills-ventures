@@ -48,11 +48,11 @@ const getUserTypes = (user, board) => {
 
 const createAvailable = async (req, res, next) => {
   const userGradeId = req.user.grade_id;
-  const boardType = getBoardType(req.params.typeId);
+  const boardType = getBoardType(+req.params.typeId);
 
-  if (userGradeId === 1 && boardType === "NOTICE") next();
-  if (userGradeId <= 2 && boardType === "OPERATION") next();
-  if (userGradeId <= 3 && boardType === "GENERAL") next();
+  if (userGradeId === 1 && boardType === "NOTICE") return next();
+  if (userGradeId <= 2 && boardType === "OPERATION") return next();
+  if (userGradeId <= 3 && boardType === "GENERAL") return next();
 
   const error = new Error("INVALID_USER");
   error.statusCode = 403;

@@ -8,26 +8,6 @@ describe("Request test", () => {
     const result = new Request(req);
     expect(result.data.body).toBe("hi");
   });
-
-  test("Request.data: getReqBodyForWritingBoard", () => {
-    const req = {
-      body: {
-        writer_id: "1",
-        writed_id: "1",
-        name: "title2",
-        board_type_id: 3,
-        text: "내가 가장 선호하는 저녁밥은....",
-      },
-    };
-    const result = new Request(req);
-    expect(result.getReqBodyForWritingBoard().writer_id).toBe("1");
-    expect(result.getReqBodyForWritingBoard().writed_id).toBe("1");
-    expect(result.getReqBodyForWritingBoard().text).toBe(
-      "내가 가장 선호하는 저녁밥은...."
-    );
-    expect(result.getReqBodyForWritingBoard().name).toBe("title2");
-    expect(result.getReqBodyForWritingBoard().board_type_id).toBe(3);
-  });
 });
 
 describe("errorConstructor test", () => {
