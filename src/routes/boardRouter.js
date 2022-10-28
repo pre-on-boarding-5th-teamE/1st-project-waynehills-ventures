@@ -20,7 +20,7 @@ router.post(
 router.get(
   "/page/:typeId/:pageNum",
   auth.loginRequired,
-  errorHandler(readAvailable),
+  readAvailable,
   errorHandler(boardController.list)
 );
 

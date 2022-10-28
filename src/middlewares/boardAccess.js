@@ -2,27 +2,32 @@ const User = require("../models/user");
 const Board = require("../models/board");
 
 const getboardById = async (boardId) => {
-  const board = await Board.findOne({
-    where: {
-      id: boardId,
-    },
-    include: {
-      model: User,
-      required: true,
-    },
-  });
+  try {
+    const board = await Board.findOne({
+      where: {
+        id: boardId,
+      },
+      include: {
+        model: User,
+        required: true,
+      },
+    });
 
-  if (!board) {
-    const error = new Error("NOT_FOUND");
-    error.statusCode = 404;
-    throw error;
+    if (!board) {
+      const error = new Error("NOT_FOUND");
+      error.statusCode(404);
+      error.message("NOT_FOUND");
+      throw error;
+    }
+  } catch (err) {
+    res.status(err.status ? err.status : 500).json({ message: err.message });
   }
 };
 
 const getBoardType = (boardTypeId) => {
-  if (boardTypeId === 1) return "NOTICE";
-  if (boardTypeId === 2) return "OPERATION";
-  if (boardTypeId === 3) return "GENERAL";
+  if (boardTypeId === "1") return "NOTICE";
+  if (boardTypeId === "2") return "OPERATION";
+  if (boardTypeId === "3") return "GENERAL";
   else return undefined;
 };
 
@@ -47,110 +52,130 @@ const getUserTypes = (user, board) => {
 };
 
 const createAvailable = async (req, res, next) => {
-  const userGradeId = req.user.grade_id;
-  const boardType = getBoardType(+req.params.typeId);
+  try {
+    const userGradeId = req.user.grade_id;
+    const boardType = getBoardType(req.params.typeId);
+    if (userGradeId === 1 && boardType === "NOTICE") return next();
+    if (userGradeId <= 2 && boardType === "OPERATION") return next();
+    if (userGradeId <= 3 && boardType === "GENERAL") return next();
 
-  if (userGradeId === 1 && boardType === "NOTICE") return next();
-  if (userGradeId <= 2 && boardType === "OPERATION") return next();
-  if (userGradeId <= 3 && boardType === "GENERAL") return next();
-
-  const error = new Error("INVALID_USER");
-  error.statusCode = 403;
-  throw error;
+    const error = new Error("INVALID_USER");
+    error.statusCode = 403;
+    error.massage = "INVALID_USER";
+    throw error;
+  } catch (err) {
+    res.status(err.status ? err.status : 500).json({ message: err.message });
+  }
 };
 
 const readAvailable = async (req, res, next) => {
-  const userType = getUserTypes(req.user, undefined);
-  const boardType = getBoardType(req.params.typeId);
+  try {
+    const user = req.user;
+    const boardTypeId = req.params.typeId;
+    const userType = getUserTypes(user, undefined);
+    const boardType = getBoardType(boardTypeId);
 
-  if (boardType === "NOTICE" || boardType === "GENERAL") {
-    next();
+    if (boardType === "NOTICE" || boardType === "GENERAL") {
+      return next();
+    }
+
+    if (
+      boardType === "OPERATION" &&
+      (userType.includes("ADMIN") || userType.includes("MANAGER"))
+    ) {
+      return next();
+    }
+
+    const error = new Error("INVALID_USER");
+    error.statusCode = 403;
+    error.massage = "INVALID_USER";
+    throw error;
+  } catch (err) {
+    res.status(err.status ? err.status : 500).json({ message: err.message });
   }
-
-  if (
-    boardType === "OPERATION" &&
-    (userType.includes("ADMIN") || userType.includes("MANAGER"))
-  ) {
-    next();
-  }
-
-  const error = new Error("INVALID_USER");
-  error.statusCode = 403;
-  throw error;
 };
 
 const updateAvailable = async (req, res, next) => {
-  const boardType = getBoardType(req.params.typeId);
-  const board = await getboardById(req.params.boardId);
-  const userTypes = getUserTypes(req.user, board);
+  try {
+    const boardType = getBoardType(req.params.typeId);
+    const board = await getboardById(req.params.boardId);
+    const userTypes = getUserTypes(req.user, board);
 
-  if (userTypes.includes("WRITER")) next();
+    if (userTypes.includes("WRITER")) return next();
 
-  if (
-    boardType === "NOTICE" &&
-    userTypes.includes("DELETEUSER") &&
-    userTypes.includes("ADMIN")
-  ) {
-    next();
+    if (
+      boardType === "NOTICE" &&
+      userTypes.includes("DELETEUSER") &&
+      userTypes.includes("ADMIN")
+    ) {
+      return next();
+    }
+
+    if (
+      boardType === "OPERATION" &&
+      userTypes.includes("DELETEUSER") &&
+      (userTypes.includes("ADMIN") || userTypes.includes("MANAGER"))
+    ) {
+      return next();
+    }
+
+    if (
+      boardType === "GENERAL" &&
+      userTypes.includes("DELETEUSER") &&
+      userTypes.includes("ADMIN")
+    ) {
+      return next();
+    }
+    const error = new Error("INVALID_USER");
+    error.statusCode = 403;
+    error.massage = "INVALID_USER";
+    throw error;
+  } catch (err) {
+    res.status(err.status ? err.status : 500).json({ message: err.message });
   }
-
-  if (
-    boardType === "OPERATION" &&
-    userTypes.includes("DELETEUSER") &&
-    (userTypes.includes("ADMIN") || userTypes.includes("MANAGER"))
-  ) {
-    next();
-  }
-
-  if (
-    boardType === "GENERAL" &&
-    userTypes.includes("DELETEUSER") &&
-    userTypes.includes("ADMIN")
-  ) {
-    next();
-  }
-
-  const error = new Error("INVALID_USER");
-  error.statusCode = 403;
-  throw error;
 };
 
 const deleteAvailable = async (req, res, next) => {
-  const board = await getboardById(req.params.boadId);
-  const boardType = getBoardType(req.params.typeIs);
-  const userTypes = getUserTypes(req.user, board);
+  try {
+    const board = await getboardById(req.params.boadId);
+    const boardType = getBoardType(req.params.typeIs);
+    const userTypes = getUserTypes(req.user, board);
 
-  if (userTypes.includes("WRITER")) {
-    next();
+    if (userTypes.includes("WRITER")) {
+      return next();
+    }
+
+    if (
+      boardType === "NOTICE" &&
+      userTypes.includes("DELETEUSER") &&
+      userTypes.includes("ADMIN")
+    ) {
+      return next();
+    }
+
+    if (
+      boardType === "OPERATION" &&
+      userTypes.includes("DELETEUSER") &&
+      (userTypes.includes("ADMIN") || userTypes.includes("MANAGER"))
+    ) {
+      return next();
+    }
+
+    if (
+      boardType === "GENERAL" &&
+      userTypes.includes("DELETEUSER") &&
+      userTypes.includes("ADMIN")
+    ) {
+      return next();
+    }
+
+    const error = new Error("INVALID_USER");
+    error.statusCode = 403;
+    error.massage = "INVALID_USER";
+    throw error;
+  } catch (err) {
+    res.status(err.status ? err.status : 500).json({ message: err.message });
   }
-
-  if (
-    boardType === "NOTICE" &&
-    userTypes.includes("DELETEUSER") &&
-    userTypes.includes("ADMIN")
-  ) {
-    next();
-  }
-
-  if (
-    boardType === "OPERATION" &&
-    userTypes.includes("DELETEUSER") &&
-    (userTypes.includes("ADMIN") || userTypes.includes("MANAGER"))
-  ) {
-    next();
-  }
-
-  if (
-    boardType === "GENERAL" &&
-    userTypes.includes("DELETEUSER") &&
-    userTypes.includes("ADMIN")
-  ) {
-    next();
-  }
-
-  const error = new Error("INVALID_USER");
-  error.statusCode = 403;
-  throw error;
 };
 
 module.exports = {
