@@ -2,8 +2,11 @@ const { Board, sequelize } = require("../models");
 const { createApp } = require("../../app");
 const request = require("supertest");
 
+//테스트 코드에 사용중인 토큰은 (auth) 기한이 9일이다.
+
 describe("board service test: ", () => {
   let app;
+  const auth = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjY2OTU2OTA5LCJleHAiOjE2Njc3MzQ1MDl9.bcQwXVQJwFVveH2a5A8T9VEtDK6qd7vssPfC-ra5Dgg`;
   beforeAll(async () => {
     app = createApp();
     await sequelize.sync({});
@@ -16,10 +19,10 @@ describe("board service test: ", () => {
     );
     await sequelize.query(
       `INSERT INTO 
-      user(name, email, password, phone, age, kakao_id, grade_id, gender_id, platform_type_id) 
-      VALUES('a','a@gmail.com', 'password', '111',1,'kakao1',1,1,1),
-      ('b','b@gmail.com', 'password', '222',2,'kakao2',2,2,2),
-      ('c','c@gmail.com', 'password', '333',3,'kakao3',3,2,1)`
+      user(name, email, password, phone, age, grade_id, gender_id, platform_type_id) 
+      VALUES('a','a@gmail.com', 'password', '111',1,1,1,1),
+      ('b','b@gmail.com', 'password', '222',2,2,2,2),
+      ('c','c@gmail.com', 'password', '333',3,3,2,1)`
     );
     await sequelize.query(
       `
@@ -45,26 +48,28 @@ describe("board service test: ", () => {
   });
 
   describe("boardWriting test: ", () => {
-    test("success:", async () => {
+    test.only("success:", async () => {
       await request(app)
         .post("/board/3")
+        .set({ Authorization: auth })
         .send({
-          writer_id: "1",
-          writed_id: "1",
           name: "유우머1",
           board_type_id: 3,
           text: "유머 시리즈1",
         })
         .expect(201)
-        .expect({ message: "success" });
+        .expect({ message: "success" })
+        .end((err, res) => {
+          if (err) return done(err);
+          return done();
+        });
     });
 
     test("success:", async () => {
       await request(app)
         .post("/board/1")
+        .set({ Authorization: auth })
         .send({
-          writer_id: "1",
-          writed_id: "1",
           name: "공지사항",
           board_type_id: 1,
           text: "공지...",
@@ -76,9 +81,8 @@ describe("board service test: ", () => {
     test("success:", async () => {
       await request(app)
         .post("/board/2")
+        .set({ Authorization: auth })
         .send({
-          writer_id: "2",
-          writed_id: "2",
           name: "공지사항",
           board_type_id: 1,
           text: "공지...",
@@ -90,6 +94,7 @@ describe("board service test: ", () => {
     test("falied:", async () => {
       await request(app)
         .post("/board/3")
+        .set({ Authorization: auth })
         .send({
           writer_id: "",
           writed_id: "1",
@@ -104,9 +109,8 @@ describe("board service test: ", () => {
     test("falied:", async () => {
       await request(app)
         .post("/board/3")
+        .set({ Authorization: auth })
         .send({
-          writer_id: "1",
-          writed_id: "1",
           name: "유우머1",
           board_type_id: 3,
           text: "",
@@ -120,12 +124,12 @@ describe("board service test: ", () => {
     test("success: ", async () => {
       const response = await request(app)
         .get("/board/page/1/1")
+        .set({ Authorization: auth })
         .send({
-          userInfo: {
-            grade: 1,
+          user: {
+            grade_id: 1,
           },
         });
-      //   console.log(response.body);
       expect(response.status).toEqual(200);
       expect(response.body.length).toBe(4);
     });
@@ -135,21 +139,24 @@ describe("board service test: ", () => {
     test("success", async () => {
       const response = await request(app)
         .get("/board/page/1/2")
-        .send({ userInfo: { grade: 3 } });
+        .set({ Authorization: auth })
+        .send({ user: { grade_id: 3 } });
       expect(response.body.length).toBe(2);
     });
 
     test("failed, 잘못된 url", async () => {
       await request(app)
         .get("/board/page/")
-        .send({ userInfo: { grade: 3 } })
+        .set({ authorization: auth })
+        .send({ user: { grade_id: 3 } })
         .expect(404);
     });
 
     test("failed, pageNum 잘못된 값", async () => {
       await request(app)
         .get("/board/page/1/lll")
-        .send({ userInfo: { grade: 3 } })
+        .set({ Authorization: auth })
+        .send({ user: { grade_id: 3 } })
         .expect(400)
         .expect({ message: "invalid_key" });
     });
@@ -159,7 +166,8 @@ describe("board service test: ", () => {
     test("success", async () => {
       const response = await request(app)
         .get("/board/search/1/first/1")
-        .send({ userInfo: { grade: 1 } });
+        .set({ Authorization: auth })
+        .send({ user: { grade_id: 1 } });
       expect(response.status).toEqual(200);
       expect(response.body.length).toBe(1);
     });
@@ -167,7 +175,8 @@ describe("board service test: ", () => {
     test("success: 일반회원은 운영게시글을 조회 못함", async () => {
       const response = await request(app)
         .get("/board/search/1/second/1")
-        .send({ userInfo: { grade: 3 } });
+        .set({ Authorization: auth })
+        .send({ user: { grade_id: 3 } });
       expect(response.status).toEqual(200);
       expect(response.body.length).toBe(0);
     });
@@ -175,7 +184,8 @@ describe("board service test: ", () => {
     test("success: 찾은 게시글이 작성된 게시글과 일치하는지 테스트", async () => {
       const response = await request(app)
         .get("/board/search/1/third/1")
-        .send({ userInfo: { grade: 1 } });
+        .set({ authorization: auth })
+        .send({ user: { grade_id: 1 } });
       expect(response.status).toEqual(200);
       expect(response.body).toEqual([
         { name: "third", id: 3, Type: { name: "자유게시판" } },
@@ -185,14 +195,16 @@ describe("board service test: ", () => {
     test("failed: 잘못된 url", async () => {
       await request(app)
         .get("/board/search/1/t")
-        .send({ userInfo: { grade: 1 } })
+        .set({ authorization: auth })
+        .send({ user: { grade_id: 1 } })
         .expect(404);
     });
 
     test("failed: pageNum 가 숫자 아님", async () => {
       await request(app)
         .get("/board/search/1/third/what?")
-        .send({ userInfo: { grade: 1 } })
+        .set({ authorization: auth })
+        .send({ user: { grade_id: 1 } })
         .expect(400)
         .expect({ message: "invalid_key" });
     });
@@ -200,7 +212,8 @@ describe("board service test: ", () => {
     test("failed: typeId 가 숫자 아님", async () => {
       await request(app)
         .get("/board/search/wh/third/1")
-        .send({ userInfo: { grade: 1 } })
+        .set({ authorization: auth })
+        .send({ user: { grade_id: 1 } })
         .expect(400)
         .expect({ message: "invalid_key" });
     });
@@ -216,7 +229,8 @@ describe("board service test: ", () => {
     test("success: 특정 게시물의 디테일이 같은지 테스트", async () => {
       const response = await request(app)
         .get("/board/detail/1/1")
-        .send({ userInfo: { grade: 1 } });
+        .set({ authorization: auth })
+        .send({ user: { grade_id: 1 } });
       expect(response.status).toEqual(200);
       expect(response.body).toEqual([
         {
@@ -232,14 +246,16 @@ describe("board service test: ", () => {
     test("failed: url 이 틀렸을때", async () => {
       const response = await request(app)
         .get("/board/detai")
-        .send({ userInfo: { grade: 1 } });
+        .set({ authorization: auth })
+        .send({ user: { grade_id: 1 } });
       expect(response.status).toEqual(404);
     });
 
     test("failed: pageNum 숫자가 아닐때", async () => {
       await request(app)
         .get("/board/detail/1/hhh")
-        .send({ userInfo: { grade: 1 } })
+        .set({ Authorization: auth })
+        .send({ user: { grade_id: 1 } })
         .expect(400)
         .expect({ message: "invalid_key" });
     });
@@ -247,13 +263,14 @@ describe("board service test: ", () => {
     test("failed: 없는 게시물", async () => {
       await request(app)
         .get("/board/detail/1/1000")
-        .send({ userInfo: { grade: 1 } })
+        .set({ Authorization: auth })
+        .send({ user: { grade_id: 1 } })
         .expect(400)
         .expect({ message: "key_error" });
     });
   });
 
-  describe("updateBoard test: ", () => {
-    test("success: 업데이트 성공", () => {});
-  });
+  //   describe("updateBoard test: ", () => {
+  //     test("success: 업데이트 성공", () => {});
+  //   });
 });

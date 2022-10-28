@@ -6,8 +6,12 @@ class Request {
   }
 
   getReqBodyForWritingBoard = () => {
-    const { writer_id, writed_id, name, text, board_type_id } = this.data.body;
-    const result = { writer_id, writed_id, name, text, board_type_id };
+    const { name, text, board_type_id } = this.data.body;
+    const temp = this.getUserInfo();
+    const writer_id = temp.id;
+    const writed_id = writer_id;
+    const result = { name, text, board_type_id, writer_id, writed_id };
+    console.log(result);
     return result;
   };
 
@@ -28,12 +32,10 @@ class Request {
     return keyWord;
   };
 
-  //로그인 과정에서 사용자의 정보가 토큰에 저장 =>
-  //토큰 검증 후 해당 정보를 req.body.userInfo 에 넣는다고 가정함.
-  //작업이 진행되면서 수정해야 할 수 있다.
   getUserInfo = () => {
-    const { userInfo } = this.data.body;
-    return userInfo;
+    const user = this.data.user.dataValues;
+    console.log("user", user);
+    return user;
   };
 
   getBoardId = () => {

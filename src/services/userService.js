@@ -1,3 +1,4 @@
+require("dotenv").config();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const axios = require("axios");
@@ -73,8 +74,8 @@ const getDeletedUser = async (email) => {
 };
 
 const getUserById = async (id) => {
+  console.log(id);
   const [result] = await User.findAll({ where: { id: id } });
-
   return result;
 };
 

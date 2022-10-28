@@ -22,9 +22,9 @@ const writingBoard = async (Data) => {
 
 const getList = async (Data) => {
   const value = await Data.getPageNumAndType();
-  const userInfo = await Data.getUserInfo();
+  const user = await Data.getUserInfo();
   extendError.findKeyError(value.pageNum);
-  extendError.findKeyError(userInfo.grade);
+  extendError.findKeyError(user.grade_id);
   const config = {
     include: {
       model: Type,
@@ -35,7 +35,7 @@ const getList = async (Data) => {
     offset: 4 * (value.pageNum - 1),
     limit: 4,
   };
-  if (userInfo.grade !== 3) {
+  if (user.grade_id !== 3) {
     return await Board.findAll({
       ...config,
     });
@@ -52,10 +52,10 @@ const getList = async (Data) => {
 const getSearch = async (Data) => {
   const value = await Data.getPageNumAndType();
   const keyWord = await Data.getKeyWord();
-  const userInfo = await Data.getUserInfo();
+  const user = await Data.getUserInfo();
 
   extendError.findKeyError(keyWord);
-  extendError.findKeyError(userInfo.grade);
+  extendError.findKeyError(user.grade_id);
   extendError.findKeyError(value.pageNum);
 
   const config = {
@@ -82,7 +82,7 @@ const getSearch = async (Data) => {
       ],
     },
   };
-  if (userInfo.grade !== 3) {
+  if (user.grade_id !== 3) {
     return await Board.findAll({
       ...config,
     });
@@ -137,45 +137,45 @@ const getDetailPage = async (Data) => {
 
 const updateBoard = async (Data) => {
   const boardId = await Data.getBoardId();
-  const userInfo = await Data.getUserInfo();
+  const user = await Data.getUserInfo();
   const content = await Data.getUpdateContent();
 
   extendError.findKeyError(boardId);
-  extendError.findKeyError(userInfo.userId);
+  extendError.findKeyError(user.id);
 
   return await Board.update(content, {
     where: {
       id: boardId,
-      writer_id: userInfo.userId,
+      writer_id: user.id,
     },
   });
 };
 
 const deleteBoard = async (Data) => {
   const boardId = await Data.getBoardId();
-  const userInfo = await Data.getUserInfo();
+  const user = await Data.getUserInfo();
 
-  if (userInfo.grade === 1) {
+  if (user.grade_id === 1) {
     return await Board.destroy({
       where: {
         id: boardId,
       },
     });
-  } else if (userInfo.grade === 2) {
+  } else if (user.grade_id === 2) {
     return await Board.destroy({
       where: {
         id: boardId,
         [Op.or]: [
-          { board_type_id: 2, writer_id: userInfo.id },
+          { board_type_id: 2, writer_id: user.id },
           { board_type_id: 3 },
         ],
       },
     });
-  } else if (userInfo.grade === 3) {
+  } else if (user.grade_id === 3) {
     return await Board.destroy({
       where: {
         id: boardId,
-        writer_id: userInfo.id,
+        writer_id: user.id,
         board_type_id: 3,
       },
     });
