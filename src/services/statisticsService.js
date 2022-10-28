@@ -12,12 +12,14 @@ const getGenderStatistics = async () => {
   const menPercent = ((menUserCount / totalUserCount) * 100).toFixed(2);
   const womenPercent = ((womenUserCount / totalUserCount) * 100).toFixed(2);
 
-  const genderStatistics = {};
-  genderStatistics["totalUserCount"] = totalUserCount;
-  genderStatistics["menUserCount"] = menUserCount;
-  genderStatistics["womenUserCount"] = womenUserCount;
-  genderStatistics["menPercent"] = menPercent;
-  genderStatistics["womenPercent"] = womenPercent;
+  const genderStatistics = {
+    totalUserCount,
+    menUserCount,
+    womenUserCount,
+    menPercent,
+    womenPercent,
+  };
+
   return genderStatistics;
 };
 
@@ -87,20 +89,22 @@ const getAgeStatistics = async () => {
     100
   ).toFixed(2);
 
-  const ageStatistics = {};
-  ageStatistics["totalUserCount"] = totalUserCount;
-  ageStatistics["underTeensUserCount"] = underTeensUserCount;
-  ageStatistics["twentiesUserCount"] = twentiesUserCount;
-  ageStatistics["thirtiesUserCount"] = thirtiesUserCount;
-  ageStatistics["fortiesUserCount"] = fortiesUserCount;
-  ageStatistics["fiftyUserCount"] = fiftyUserCount;
-  ageStatistics["overSixtiesUserCount"] = overSixtiesUserCount;
-  ageStatistics["underTeensPercent"] = underTeensPercent;
-  ageStatistics["twentiesPercent"] = twentiesPercent;
-  ageStatistics["thirtiesPercent"] = thirtiesPercent;
-  ageStatistics["fortiesPercent"] = fortiesPercent;
-  ageStatistics["fiftyPercent"] = fiftyPercent;
-  ageStatistics["overSixtiesPercent"] = overSixtiesPercent;
+  const ageStatistics = {
+    totalUserCount,
+    underTeensUserCount,
+    twentiesUserCount,
+    thirtiesUserCount,
+    fortiesUserCount,
+    fiftyUserCount,
+    overSixtiesUserCount,
+    underTeensPercent,
+    twentiesPercent,
+    thirtiesPercent,
+    fortiesPercent,
+    fiftyPercent,
+    overSixtiesPercent,
+  };
+
   return ageStatistics;
 };
 
@@ -118,9 +122,9 @@ const getTimeStatistics = async () => {
     );
   });
   const avgLastAccessDay = (sumDay / lastTimeList.length).toFixed(2);
-  const timeStatistics = {};
-  timeStatistics["totalAccessUserCount"] = totalAccessUserCount;
-  timeStatistics["avgLastAccessDay"] = avgLastAccessDay;
+
+  const timeStatistics = { totalAccessUserCount, avgLastAccessDay };
+
   return timeStatistics;
 };
 
