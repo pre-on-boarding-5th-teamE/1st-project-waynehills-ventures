@@ -1,3 +1,5 @@
+const error = require("../middlewares/errorConstructor");
+
 class Request {
   constructor(req) {
     this.data = req;
@@ -15,6 +17,9 @@ class Request {
       pageNum,
       typeId,
     };
+    if (this.isNumber(pageNum) || this.isNumber(typeId)) {
+      throw new error("invalid_key", 400);
+    }
     return result;
   };
 
@@ -33,12 +38,19 @@ class Request {
 
   getBoardId = () => {
     const { boardId } = this.data.params;
+    if (this.isNumber(boardId)) {
+      throw new error("invalid_key", 400);
+    }
     return boardId;
   };
 
   getUpdateContent = () => {
     const { content } = this.data.body;
     return content;
+  };
+
+  isNumber = (value) => {
+    return isNaN(+value);
   };
 }
 module.exports = Request;

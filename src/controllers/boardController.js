@@ -21,7 +21,6 @@ const list = async (req, res) => {
 
 const search = async (req, res) => {
   const result = await getSearch(new Request(req));
-  console.log(result);
   res.status(200).json(result);
 };
 
