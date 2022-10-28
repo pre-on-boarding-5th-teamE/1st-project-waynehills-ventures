@@ -278,8 +278,8 @@ const signInByKakao = async (code) => {
   }
 };
 
-const deleteUser = async (id) => {
-  return await User.destroy({ where: { id: id } });
+const deleteUser = async (userId) => {
+  return await User.destroy({ where: { id: userId } });
 };
 
 module.exports = {

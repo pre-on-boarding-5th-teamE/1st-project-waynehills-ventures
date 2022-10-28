@@ -44,13 +44,13 @@ const signInByKakao = errorHandler(async (req, res) => {
 });
 
 const deleteUser = errorHandler(async (req, res) => {
-  const { id } = req.query;
+  const userId = req.user.id;
 
-  if (!id) {
+  if (!userId) {
     throw new error("KEY_ERROR", 400);
   }
 
-  await userService.deleteUser(id);
+  await userService.deleteUser(userId);
   res.status(204).send();
 });
 
