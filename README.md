@@ -135,6 +135,7 @@
     │   └── userController.js
     ├── middlewares
     │   ├── auth.js
+    │   ├── boardAccess.js
     │   ├── container.js
     │   ├── errorConstructor.js
     │   ├── errorHandler.js
